@@ -81,6 +81,10 @@ void Vision_DataReceive(uint8_t *read_from_usart, uint32_t length)
 		memcpy(&vision_receive, read_from_usart, sizeof(vision_receive));
 		Vision_ParseData();
     	Detect_Update(DeviceID_PC);
+		
+		//将数据存入接收buffer
+		//memcpy(&vision_receive, read_from_usart, sizeof(vision_receive));
+		//Vision_ParseData();
 	}
 }
 

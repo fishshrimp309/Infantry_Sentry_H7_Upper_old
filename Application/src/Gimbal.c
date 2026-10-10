@@ -18,6 +18,7 @@
 #define RAD_TO_DEG 57.2957795f  // 180 / PI
 #define TOP_YAW_LIMIT 45.0f
 #define BASE_YAW_J 0.04575f
+#define FOLD_YAW_OFFSET_LIMIT 0.3f //过洞对准偏移量限幅
 
 Gimbal_t gimbal;
 float visionFindAver;
@@ -226,17 +227,12 @@ void Gimbal_StateCtrl()
 				gimbal.scan_flag=true;
 			else
 				gimbal.scan_flag=false;
-			
-			if(vision.is_fold_gimbal == 1)
-				gimbal.fold_flag = true;
-			else
-				gimbal.fold_flag = false;
-			
-			if(gimbal.scan_flag&&gimbal.fold_flag  == false)
+
+			if(gimbal.scan_flag&&gimbal.fold_flag  == false&&vision.is_fold_gimbal != 1)
 			{
 				gimbal.state = GimbalState_Scan;
 			}
-			else if(vision.is_aligning == 1)
+			else if(vision.is_aligning == 1 || vision.is_fold_gimbal == 1)
 				gimbal.state = GimbalState_Fold;//趴下对准过洞的状态
 			else
 				gimbal.state = GimbalState_Rocker;
@@ -313,6 +309,20 @@ void Gimbal_RockerCtrl()
 			gimbal.fold_flag = true;
 		}
 	}
+	
+	#if Sentry_Mode
+	if(vision.is_fold_gimbal == 1 || vision.is_aligning == 1)
+	{
+		gimbal.fold_pitch.targetAngle = 0.0f;
+		gimbal.fold_flag = true;
+	}
+	if(vision.is_aligning != 1 || vision.is_fold_gimbal != 1)
+	{
+		gimbal.fold_pitch.targetAngle = 100.0f;
+		gimbal.fold_flag  = false;
+	}
+	#endif
+		
 	rcInfo.left_last = rcInfo.left;//叠史
 	// 小pitch限位：相对于fold_pitch的相对角度限制
 	LIMIT(gimbal.fold_pitch.targetAngle, gimbal.fold_pitch.pitchMin, gimbal.fold_pitch.pitchMax);//折叠pitch限位
@@ -445,17 +455,32 @@ void Gimbal_ScanCtrl()
 
 void Gimbal_FoldCtrl()//折叠过洞
 {
-	gimbal.top_yaw.targetAngle = gimbal.top_yaw.angle + vision.yaw_offset_degree;
+	float yaw_offset_degree = vision.yaw_offset_degree * 0.001f;
+	LIMIT(yaw_offset_degree, -FOLD_YAW_OFFSET_LIMIT, FOLD_YAW_OFFSET_LIMIT);//偏移限幅，防止上位机跳变/野值引起猛摆
+	gimbal.top_yaw.targetAngle += yaw_offset_degree;
 	gimbal.base_yaw.targetAngle = gimbal.top_yaw.targetAngle;
-	//小pitch
-	gimbal.top_pitch.targetAngle = 0; 
-	LIMIT(gimbal.top_pitch.targetAngle, gimbal.top_pitch.pitchMin, gimbal.top_pitch.pitchMax);
-	//折叠pitch
-	gimbal.fold_pitch.targetAngle = 0.0f;
-	gimbal.fold_flag = true;
+	
+	if(vision.is_fold_gimbal == 1 || vision.is_aligning == 1)
+	{
+		gimbal.fold_pitch.targetAngle = 0.0f;
+		gimbal.top_pitch.targetAngle = 0.0f;
+		gimbal.fold_flag = true;
+	}
+	else
+	{
+		gimbal.fold_pitch.targetAngle = 100.0f;
+		gimbal.fold_flag  = false;
+	}
+//	//小pitch
+//	if(gimbal.fold_flag == false && vision.is_fold_gimbal == 1)
+//		gimbal.top_pitch.targetAngle = 0; 
+//	LIMIT(gimbal.top_pitch.targetAngle, gimbal.top_pitch.pitchMin, gimbal.top_pitch.pitchMax);
+//	//折叠pitch
+//	gimbal.fold_pitch.targetAngle = 0.0f;
+////	gimbal.fold_flag = true;
 
-	// 小pitch限位：相对于fold_pitch的相对角度限制
-	LIMIT(gimbal.fold_pitch.targetAngle, gimbal.fold_pitch.pitchMin, gimbal.fold_pitch.pitchMax);//折叠pitch限位
+//	// 小pitch限位：相对于fold_pitch的相对角度限制
+//	LIMIT(gimbal.fold_pitch.targetAngle, gimbal.fold_pitch.pitchMin, gimbal.fold_pitch.pitchMax);//折叠pitch限位
 }
 
 /********依旧键鼠***********/

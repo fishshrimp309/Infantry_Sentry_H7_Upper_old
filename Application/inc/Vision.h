@@ -68,11 +68,11 @@ typedef struct __attribute__((packed))
 	float linear_y;	 
 	float angular_z; //旋转速度
 	
-	uint8_t end_frame; 
-	
 	uint8_t is_fold_gimbal;//0表示不折叠 1表示折叠
 	uint8_t is_aligning;//0表示不校准（跟随）， 1表示校准（跟随）
 	float yaw_offset_degree;
+	
+	uint8_t end_frame; 
 	
 	uint8_t tracking; //0表示没瞄到 1表示瞄到装甲板 2表示瞄到符
 	
