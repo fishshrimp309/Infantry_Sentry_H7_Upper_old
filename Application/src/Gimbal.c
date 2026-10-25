@@ -127,7 +127,7 @@ void Gimbal_UpdateAngle()
 	if (gimbal.fold_pitch.angle >= 60.0f && gimbal.fold_pitch.angle <= 110.0f)
 	{
 		// fold_pitch角度在95-60度之间时，相对角度限幅为 60到-13度
-		gimbal.top_pitch.relativePitchMax = 100.0f;//gimbal.top_pitch.relativePitchMax/Min是pitch相对垂直于大pitch的直线的相对角，与yaw_delta_angle是一个东西
+		gimbal.top_pitch.relativePitchMax = 60.0f;//gimbal.top_pitch.relativePitchMax/Min是pitch相对垂直于大pitch的直线的相对角，与yaw_delta_angle是一个东西
 		gimbal.top_pitch.relativePitchMin = -13.0f;
 	}
 	else if (gimbal.fold_pitch.angle >= 10.0f && gimbal.fold_pitch.angle < 60.0f)
