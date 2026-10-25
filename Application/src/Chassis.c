@@ -390,10 +390,9 @@ void Chassis_UpdateSlope()
 	Slope_NextVal(&chassis.move.xSlope);
 	Slope_NextVal(&chassis.move.ySlope);
 	Slope_NextVal(&chassis.move.spinSlope);
-	float rotateRatio = (chassis.info.wheelbase + chassis.info.wheeltrack) / 4.0f;
 	chassis.move.maxVx = SET_WHEELSPEED_MAX / 60.0f / 14.88 * 2 * PI * chassis.info.wheelRadius;
 	chassis.move.maxVy = chassis.move.maxVx;//60是rpm转换成转速 14.88是减速箱减速比 2PI*R是轮子周长
-	chassis.move.maxVw = SET_WHEELSPEED_MAX / rotateRatio / 60.0f / 14.88 * 2.0f * PI * chassis.info.wheelRadius * 1.0f / 1.414f;
+	chassis.move.maxVw = SET_WHEELSPEED_MAX / chassis.info.R / 60.0f / 14.88 * 2.0f * PI * chassis.info.wheelRadius;
 }
 
 
