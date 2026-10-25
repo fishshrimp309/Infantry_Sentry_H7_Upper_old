@@ -22,7 +22,6 @@ void OS_ErrorCallback(void const * argument)
 	disable_motor_mode(&hfdcan2,0x01,MIT_MODE);
 	disable_motor_mode(&hfdcan2,0x02,MIT_MODE);
 	disable_motor_mode(&hfdcan2,0x03,MIT_MODE);
-
 	USER_CAN_SetMotorCurrent(&hfdcan2,0x1FF,0,0,0,0);//关断电机
 	USER_CAN_SetMotorCurrent(&hfdcan1,0x200,0,0,0,0);
 	for(;;)

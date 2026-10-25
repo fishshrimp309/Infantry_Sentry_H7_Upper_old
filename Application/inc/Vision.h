@@ -48,23 +48,9 @@ typedef struct __attribute__((packed))
 
 typedef struct __attribute__((packed))
 {
-  uint8_t header ;
-  //步兵模式下的自瞄数据
-//  uint8_t control;      // 自瞄是否控制云台 0 不控制 1 控制 //
-//  float fire_thres_yaw; // 火控阈值
-//  float fire_thres_pitch;
-//  float target_yaw; // 目标yaw角度
-//  float target_pitch; // 目标pitch角度
-//  float yaw; // 云台角度、速度、加速度(弧度制,直接发,不要乘1000)
-//  float yaw_vel;
-//  float yaw_acc;
-//  float pitch;
-//  float pitch_vel;
-//  float pitch_acc;
-//  uint32_t bullet_id; // 自增的子弹ID
-//  uint16_t checksum ;
-	
-	float linear_x;
+	#if Sentry_Mode
+    uint8_t header ;
+  	float linear_x;
 	float linear_y;	 
 	float angular_z; //旋转速度
 	
@@ -105,23 +91,28 @@ typedef struct __attribute__((packed))
 	uint8_t remote_buy_bullet;  //0到1为远程买一次弹 1到2为买一次 依此类推
 	uint16_t buy_projectile; //哨兵要买多少发弹 开局为0 修改后烧饼在补血点就能兑换 只能单增 如0->100买100发 100->101买1发 依此类推
 //	uint8_t end_frame;  
-
+	#else
+  //步兵模式下的自瞄数据
+    uint8_t header;
+	uint8_t control;      // 自瞄是否控制云台 0 不控制 1 控制 //
+	float fire_thres_yaw; // 火控阈值
+	float fire_thres_pitch;
+	float target_yaw; // 目标yaw角度
+	float target_pitch; // 目标pitch角度
+	float yaw; // 云台角度、速度、加速度(弧度制,直接发,不要乘1000)
+	float yaw_vel;
+	float yaw_acc;
+	float pitch;
+	float pitch_vel;
+	float pitch_acc;
+	uint32_t bullet_id; // 自增的子弹ID
+	uint16_t checksum ;
+	#endif
 }VisionReceive;
 
 typedef struct __attribute__((packed))
-{
-	//步兵模式下发送
-//	uint8_t header;//0x5A
-//	uint8_t task_mode;   // 当前自瞄模式 0 空闲 1 打装甲板 2 小符 3 大符
-//	uint8_t enemy_color; // 敌人颜色 0 红色 1 蓝色
-//	float bullet_speed;  // 弹速
-//	float roll;          // 云台的外旋rpy角和角速度(弧度制，直接发，不要乘1000)
-//	float pitch;
-//	float pitch_vel;
-//	float yaw;
-//	float yaw_vel;
-//	uint32_t bullet_id; // 打出子弹时刻返回的子弹ID（目前没用上）
-//	uint16_t checksum ;
+{	
+	#if Sentry_Mode
 	uint8_t header;
 	float motor3508_speed[4];
 	uint8_t detect_color;  // 0-red 1-blue
@@ -140,8 +131,21 @@ typedef struct __attribute__((packed))
 	Judge_Data_e AI_Judge_data;
 	uint8_t see_enemy; //0表示没瞄到 1表示瞄到装甲板 2表示瞄到符
 	
- 	uint8_t end_frame;   
-	//uint16_t checksum;
+ 	uint8_t end_frame; 
+	#else
+	//步兵模式下发送
+	uint8_t header;//0x5A
+	uint8_t task_mode;   // 当前自瞄模式 0 空闲 1 打装甲板 2 小符 3 大符
+	uint8_t enemy_color; // 敌人颜色 0 红色 1 蓝色
+	float bullet_speed;  // 弹速
+	float roll;          // 云台的外旋rpy角和角速度(弧度制，直接发，不要乘1000)
+	float pitch;
+	float pitch_vel;
+	float yaw;
+	float yaw_vel;
+	uint32_t bullet_id; // 打出子弹时刻返回的子弹ID（目前没用上）
+	uint16_t checksum ;
+	#endif
 }VisionTransmit;
 
 typedef struct __attribute__((packed))
@@ -164,21 +168,7 @@ typedef struct vision_sensor_struct {
 
 typedef struct
 {	
-	//步兵模式下发送
-//	uint8_t control; // 自瞄是否控制云台 0 不控制 1 控制
-//	float fire_thres_yaw; // 火控阈值
-//	float fire_thres_pitch;
-//	float target_top_yaw; //原始数据 用于火控
-//	float target_top_pitch;
-//	float top_yaw;       // 用于电控云台控制 经过mpc优化
-//	float top_yaw_vel;
-//	float top_yaw_acc;
-//	float top_pitch;
-//	float top_pitch_vel;
-//	float top_pitch_acc;
-//	uint32_t bullet_id; // 自增的子弹ID
-//	uint16_t checksum ;
-//	uint8_t mode;
+	#if Sentry_Mode	
 	float base_yaw;
 	float top_yaw;
 	float pitch;
@@ -194,6 +184,23 @@ typedef struct
 	uint8_t is_fold_gimbal;//0表示不折叠 1表示折叠
 	uint8_t is_aligning;//0表示不校准（跟随）， 1表示校准（跟随）
 	float yaw_offset_degree;
+	#else
+	//步兵模式下发送
+	uint8_t control; // 自瞄是否控制云台 0 不控制 1 控制
+	float fire_thres_yaw; // 火控阈值
+	float fire_thres_pitch;
+	float target_top_yaw; //原始数据 用于火控
+	float target_top_pitch;
+	float top_yaw;       // 用于电控云台控制 经过mpc优化
+	float top_yaw_vel;
+	float top_yaw_acc;
+	float top_pitch;
+	float top_pitch_vel;
+	float top_pitch_acc;
+	uint32_t bullet_id; // 自增的子弹ID
+	uint16_t checksum ;
+	uint8_t mode;
+	#endif
 }Vision_Type;
 
 

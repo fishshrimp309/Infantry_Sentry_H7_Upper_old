@@ -21,9 +21,6 @@ float targetangle[4];
 
 Chassis_t chassis = {0};
 
-float vx_test;
-float vy_test;
-
 /********************初始化************************/
 void Chassis_Init()
 {
@@ -140,10 +137,12 @@ void Chassis_StateCtrl()
             }
             break;
 				case Chassis_AI:
+					#if Sentry_Mode
 						if(vision_receive.spin_mode)//AI确定模式
 								chassis.rotate.mode = ChassisMode_Spin;
 						else
 								chassis.rotate.mode = ChassisMode_Follow;
+					#endif
         default:
             break;
     }
@@ -267,9 +266,6 @@ void Chassis_UpdateMove(void)
 		switch(chassis.pattern)
 		{
 		case Chassis_AI:
-//			vx = -vx;//变成右手坐标系
-//			chassis.move.vy = vy * gimbalAngleCos + vx * gimbalAngleSin;
-//			chassis.move.vx = -vy * gimbalAngleSin + vx * gimbalAngleCos;
 			chassis.move.vx = -vy * gimbalAngleSin + (-vx) * gimbalAngleCos;//vy对应ai的x，接收时已经对换，vy是电控的前进
             chassis.move.vy = vy * gimbalAngleCos + (-vx) * gimbalAngleSin;//云台往左转大yaw与底盘相对角为0到+180
 			break;
@@ -309,6 +305,7 @@ static void Chassis_HandleFollow(void) //底盘跟随模式
 	
 	if(chassis.pattern == Chassis_AI)
 	{
+		#if Sentry_Mode
 		if( vision.is_aligning == 1)//vision.is_fold_gimbal == 1 ||
 		{
 			angle = chassis.rotate.relativeAngle;// +(gimbal.top_yawMotor.angle - TOP_YAW_OFFSET) / 8192.0f * 360.0f;
@@ -336,6 +333,7 @@ static void Chassis_HandleFollow(void) //底盘跟随模式
 			LIMIT(chassis.move.vw,-chassis.move.maxVw,chassis.move.maxVw);
 		}
 		else
+		#endif
 		{
 			chassis.move.vw = vw;
 			LIMIT(chassis.move.vw,-chassis.move.maxVw,chassis.move.maxVw);
@@ -367,7 +365,6 @@ static void Chassis_HandleFollow(void) //底盘跟随模式
 		chassis.move.vw = chassis.rotate.pid.output + chassis.move.spinSlope.value;
 		LIMIT(chassis.move.vw,-chassis.move.maxVw,chassis.move.maxVw);
 	}
-
 }
 
 static void Chassis_HandleSpin(void) //小陀螺模式
@@ -451,14 +448,12 @@ void Task_Chassis_Callback()
     PID_SingleCalc(&chassis.move.real_wPID, chassis.move.vw, chassis.move.real_vw);
     
     static float ctrl_vx, ctrl_vy,ctrl_vw;
-	static float scale = 1.0f;
     ctrl_vx = chassis.move.vx + chassis.move.real_xPID.output;
     ctrl_vy = chassis.move.vy + chassis.move.real_yPID.output;
 	if((ctrl_vx<0.05f && ctrl_vx> -0.05f) &&(ctrl_vy<0.05f&&ctrl_vy>-0.05f))
 		chassis.move.real_wPID.output = 0;
-    ctrl_vw = (chassis.move.vw + chassis.move.real_wPID.output)*scale;
+    ctrl_vw = chassis.move.vw + chassis.move.real_wPID.output;
 	
-
     float wheel_v[4];
     wheel_v[0] = (ctrl_vx + ctrl_vy) * cos45 + ctrl_vw * chassis.info.R;    //左前
     wheel_v[1] = (ctrl_vx - ctrl_vy) * cos45 + ctrl_vw * chassis.info.R;    //右前

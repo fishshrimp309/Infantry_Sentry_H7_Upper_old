@@ -9,7 +9,7 @@
 #include "PID.h"
 #include "Filter.h"
 
-#define TOP_YAW_OFFSET 2387   //此处校准小yaw 7869 2376 5115 3740 6444
+#define TOP_YAW_OFFSET 3767   //此处校准小yaw 7869 2376 5115 3740 6444
 #define INIT_YAW_ANGLE -28.0f   //此处校准大yaw
 #define TOP_PITCH_OFFSET 0.151818514f //此处校准pitch
 #define FOLD_PITCH_OFFSET -0.926492786f //此处校准fold_pitch 校准效果为 当fold_pitch竖直向上时 角度为90度-0.826492786 //目前无过0检测 需机械安装时避开0点
@@ -66,7 +66,7 @@ typedef struct
       float initAngle;
       float angle, lastAngle; // pitch
       float gyro;
-      float targetAngle, lastTargetAngle;
+      float targetAngle, effectiveTargetAngle, lastTargetAngle;
       float pitchMax, pitchMin; // 限幅 (绝对角度)
       float relativePitchMax, relativePitchMin; // 相对角度限幅 (相对于fold_pitch)
       CascadePID imuPID;        // pitch陀螺仪pid
@@ -123,6 +123,6 @@ void Gimbal_VisionCtrl();
 void Gimbal_VisionCtrl_Limit();
 void Gimbal_MouseCtrl();
 void Gimbal_ScanCtrl();
-void Gimbal_FoldCtrl();
+void Gimbal_AiFoldCtrl();
 void Gimbal_Fold_KeyCallback(KeyType key, KeyCombineType combine, KeyEventType event);
 #endif
