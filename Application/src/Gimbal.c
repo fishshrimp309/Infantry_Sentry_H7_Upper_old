@@ -13,6 +13,7 @@
 #include <math.h>
 #include <stdatomic.h>
 #include <stdbool.h>
+#include "USER_Detcet.h"
 
 #define DEG_TO_RAD 0.01745329f  // PI / 180
 #define RAD_TO_DEG 57.2957795f  // 180 / PI
@@ -475,7 +476,7 @@ void Gimbal_ScanCtrl()
 
 	float current_ideal_pitch = gimbal.scan.pitch_amp * arm_sin_f32(gimbal.scan.pitch_phase) + gimbal.scan.pitch_offset;
 
-	if (gimbal.scan.init_flag) 
+	if (gimbal.scan.init_flag)
 	{
 		gimbal.scan.last_ideal_pitch = current_ideal_pitch;
 		gimbal.scan.init_flag = 0;

@@ -18,14 +18,13 @@ void Detect_InitDevice(uint8_t deviceID, uint32_t maxInterval, void (*lostFunc)(
 
 // 设备离线信息列表
 DetectDevice detectList[DETECT_DEVICE_NUM];
+DetectModule detectModule[DETECT_MODULE_NUM] = {0};
 
 // 更新指定id设备的状态
 void Detect_Update(uint8_t deviceID)
 {
 	detectList[deviceID].lastRecieveTime = HAL_GetTick();
 }
-
-
 
 // 默认掉线处理函数，若lostFunc==NULL则调用
 void Detect_DefaultLostHandler(uint8_t deviceID)
@@ -86,7 +85,26 @@ void Detect_InitAll()
 	Detect_InitDevice(DeviceID_PC, 500, NULL, NULL);
 }
 
-extern uint8_t FLAG;
+void Detect_Module_Update(void)
+{
+	// if(Detect_IsDeviceLost(DeviceID_TopYawMotor)|| Detect_IsDeviceLost(DeviceID_BaseYawMotor)|| Detect_IsDeviceLost(DeviceID_TopPitchMotor) || Detect_IsDeviceLost(DeviceID_FoldPitchMotor))
+	// 	detectModule[DetectID_Gimbal].isLost = 1;
+	// else 
+	// 	detectModule[DetectID_Gimbal].isLost = 0;
+	if(Detect_IsDeviceLost(DeviceID_BaseYawMotor))
+		detectModule[DetectID_Follow].isLost = 1;
+	else
+		detectModule[DetectID_Follow].isLost = 0;
+	// if(Detect_IsDeviceLost(DeviceID_TrigMotor)|| Detect_IsDeviceLost(DeviceID_FricMotor1)|| Detect_IsDeviceLost(DeviceID_FricMotor2))
+	// 	detectModule[DetectID_Shooter].isLost = 1;
+	// else
+	// 	detectModule[DetectID_Shooter].isLost = 0;
+	
+	// for(uint8_t id = 0; id < DETECT_MODULE_NUM; id++)
+	// {
+	// 	detectModule[id].isLost == 0;
+	// }
+}
 
 // 掉线检测任务回调
 void Task_Detect_Callback()
@@ -120,6 +138,8 @@ void Task_Detect_Callback()
 				detectList[id].isLost = 0;
 			}
 		}
+
+		Detect_Module_Update();
 	}
 }
 

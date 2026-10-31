@@ -33,6 +33,15 @@ enum
 	DETECT_DEVICE_NUM // 放在最后，代表设备数量(设备离线信息列表长度)
 };
 
+enum
+{
+	DetectID_Chassis = 0, 
+	DetectID_Gimbal,			 
+	DetectID_Shooter,
+	DetectID_Follow,
+	DETECT_MODULE_NUM
+};
+
 // 掉线检测结构体，每个设备对应一个结构体变量
 typedef struct _DetectDevice
 {
@@ -42,6 +51,11 @@ typedef struct _DetectDevice
 	void (*lostFunc)(void);	   // 掉线处理函数
 	void (*recoverFunc)(void); // 恢复连接处理函数
 } DetectDevice;
+
+typedef struct _DetectModule
+{
+	uint8_t isLost;
+} DetectModule;
 
 /****接口函数声明****/
 // 更新数据接收时间
@@ -54,5 +68,6 @@ void Detect_InitAll(void);
 void Task_Detect_Callback(void);
 
 extern DetectDevice detectList[DETECT_DEVICE_NUM];
+extern DetectModule detectModule[DETECT_MODULE_NUM];
 
 #endif

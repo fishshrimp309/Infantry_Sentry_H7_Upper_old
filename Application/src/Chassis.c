@@ -10,6 +10,7 @@
 #include "vision.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include "USER_Detcet.h"
 
 int8_t diagonal_enable = 0;
 float vx,vy,vw = 0;  //AI传来的旋转速度
@@ -76,8 +77,9 @@ void Chassis_UpdateAngle(void)
     if(chassis.rotate.InitAngle < 0)
         chassis.rotate.InitAngle += 360;
 
-    uint16_t yaw_online = 1; //判断云台电机是否离线
-    if(yaw_online == 1)
+	uint16_t yaw_online = (!detectModule[DetectID_Follow].isLost); //判断云台电机是否离线
+//	uint16_t yaw_online = 0;
+    if(yaw_online)
     {
         chassis.rotate.nowAngle = gimbal.base_yawMotor.nowAngle;
         float rel_angle_delta = chassis.rotate.nowAngle - chassis.rotate.InitAngle;  // 大yaw相对角(度)，过零保护
