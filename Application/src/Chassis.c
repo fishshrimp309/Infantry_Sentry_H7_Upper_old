@@ -59,7 +59,7 @@ void Chassis_Init()
 
 void Chassis_InitPID()
 {
-	PID_Init(&chassis.rotate.pid, 0.25, 0, 2, 4, 15); 
+	PID_Init(&chassis.rotate.pid, 0.25, 0, 4, 4, 15); 
     // PID_SetDeadzone(&chassis.rotate.pid, 0.1);变成手动死区
     // PID_Init(&chassis.move.real_xPID, 1, 0, 0, 0, 2000); // 15
     // PID_Init(&chassis.move.real_yPID, 1, 0, 0, 0, 2000); // 15

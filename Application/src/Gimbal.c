@@ -40,7 +40,7 @@ void Gimbal_Init()
 	gimbal.fold_pitch.pitchMax = 95;
 	gimbal.fold_pitch.pitchMin = 5;
 
-	gimbal.fold_pitch.initAngle = 95;
+	gimbal.fold_pitch.initAngle = 0;
 	gimbal.fold_pitch.targetAngle = gimbal.fold_pitch.initAngle;
 
 	gimbal.base_yaw.initAngle = 0; // 陀螺仪yaw开机角度   *0表示yaw不动
