@@ -77,8 +77,8 @@ void Chassis_UpdateAngle(void)
     if(chassis.rotate.InitAngle < 0)
         chassis.rotate.InitAngle += 360;
 
-	uint16_t yaw_online = (!detectModule[DetectID_Follow].isLost); //判断云台电机是否离线
-//	uint16_t yaw_online = 0;
+//	uint16_t yaw_online = (!detectModule[DetectID_Follow].isLost); //判断云台电机是否离线
+	uint16_t yaw_online = 0;
     if(yaw_online)
     {
         chassis.rotate.nowAngle = gimbal.base_yawMotor.nowAngle;

@@ -133,26 +133,28 @@ void Vision_DataTransmit(void)
 void Vision_ParseData(void)
 {	
 	#if Sentry_Mode	
-	vision.is_fold_gimbal = vision_receive.is_fold_gimbal;
-	vision.is_aligning = vision_receive.is_aligning;
-	vision.yaw_offset_degree = vision_receive.yaw_offset_degree;
-	
-	vision.pitch = vision_receive.pitch;
-	vision.base_yaw = vision_receive.base_yaw;
-	vision.top_yaw = vision_receive.top_yaw;
-	vision.tracking = vision_receive.tracking;
-	vision.distance = vision_receive.distance;//视觉部分解包	
 
 	vx=-vision_receive.linear_y*1000; //ai部分解包 同时转换坐标系 ai坐标系下向前为x 左右为y 电控坐标系下 左右为x 前后为y
 	vy=-vision_receive.linear_x*1000;
 	vw=vision_receive.angular_z;
-	chassis.rotate.align_yaw = vision_receive.align_yaw;
+
+	vision.is_fold_gimbal = vision_receive.is_fold_gimbal;
+	vision.is_aligning = vision_receive.is_aligning;
+	vision.yaw_offset_degree = vision_receive.yaw_offset_degree;
+
+//	vision.pitch = vision_receive.pitch;
+//	vision.base_yaw = vision_receive.base_yaw;
+//	vision.top_yaw = vision_receive.top_yaw;
+//	vision.tracking = vision_receive.tracking;
+//	vision.distance = vision_receive.distance;//视觉部分解包	
+
+	// chassis.rotate.align_yaw = vision_receive.align_yaw;
 	USER_SentryCmd.sentry_mode = vision_receive.sentry_mode;
-	USER_SentryCmd.energy_activation = vision_receive.energy_activation;
-	USER_SentryCmd.buy_projectile = vision_receive.buy_projectile;
-	USER_SentryCmd.buy_life = vision_receive.buy_life;
-	USER_SentryCmd.remote_buy_bullet = vision_receive.remote_buy_bullet;
-	USER_SentryCmd.remote_buy_blood = vision_receive.remote_buy_blood;
+	// USER_SentryCmd.energy_activation = vision_receive.energy_activation;
+	// USER_SentryCmd.buy_projectile = vision_receive.buy_projectile;
+	// USER_SentryCmd.buy_life = vision_receive.buy_life;
+	// USER_SentryCmd.remote_buy_bullet = vision_receive.remote_buy_bullet;
+	// USER_SentryCmd.remote_buy_blood = vision_receive.remote_buy_blood;
 
 	if(vision.tracking && shooter.fricOpenFlag==1 && gimbal.visionEnable)
 	{		

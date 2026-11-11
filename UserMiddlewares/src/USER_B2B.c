@@ -55,7 +55,8 @@ void B2B_Transmit()
 		usart2TxBuf[25] = (int16_t)chassis.rotate.relativeAngle & 0xff;
 		usart2TxBuf[26] = (((int16_t)chassis.rotate.relativeAngle) >> 8) & 0xff;
 		usart2TxBuf[27] =  gimbal.fold_flag;//折叠标志位 0未折叠 1折叠
-		
+		usart2TxBuf[28] = USER_SentryCmd.sentry_mode;
+
 		usart2TxBuf[62] = STOPFLAG;    // 急停标志
 		usart2TxBuf[63] = 0xFE;				 // 帧尾
 
